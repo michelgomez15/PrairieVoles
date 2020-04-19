@@ -98,7 +98,7 @@ def main():
 
 		if curr_distance > 0:	
 			global distance
-			distance = 0
+			
 			mice_dis.append(curr_distance)
 
 
@@ -109,7 +109,8 @@ def main():
 			daily_mice_data.append(curr_data)
 
 			write_to_file(curr_data)
-
+			# Reset the data
+			distance = 0
 
 
 		# Ensure that we are only writing to file once # Reset value once we hit an hour mark that is not 12am
