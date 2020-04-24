@@ -38,8 +38,9 @@ def generate_data():
 
 	def get_pulse(number):
 		global start
+		global distance 
 		start = time.time()
-		curr_distance += wheel_c
+		distance += wheel_c
 		
 	try:
 		print('Inializing speedometer')
@@ -57,14 +58,14 @@ def generate_data():
 			rpm = 1/elapse*60
 			speed = (wheel_c*multiplier)/(1000)
 
-			print('rpm{0:.2f} speed{1:.2f} distance{2} elapse{3:.4f} multiplier{4:.2f}'.format(rpm,speed,curr_distance,elapse,multiplier))
+			print('rpm{0:.2f} speed{1:.2f} distance{2} elapse{3:.4f} multiplier{4:.2f}'.format(rpm,speed,distance,elapse,multiplier))
 			time.sleep(0.1)
 
 			if speed < 1:
 				print(str.format('{0:.2f}', distance), "Meters")
 				print("MICE IS NO LONGER RUNNING.")
 				GPIO.cleanup()
-				return curr_distance
+				return distance
 			
 	except KeyboardInterrupt:
 		print('End of program')
@@ -83,6 +84,7 @@ def main():
 	already_recorded = False
 	running_sum = 0
 	daily_mice_data = [] # Tuple : Time, current distance, total distance for the current day**	
+	global distance
 
 	# Want to be able to read indefinitely
 	while True:
@@ -95,9 +97,8 @@ def main():
 		# Gather current time and final running sum
 		curr_time = datetime.datetime.now()
 
-		if curr_distance > 0:	
-			global distance
-			
+		if distance > 0:	
+			curr_distance = distance
 			mice_dis.append(curr_distance)
 
 
@@ -107,10 +108,10 @@ def main():
 			curr_data = (curr_time, curr_distance, running_sum)
 			daily_mice_data.append(curr_data)
 
-			write_to_file(curr_data, False, curr_time)
 			# Reset the data
 			distance = 0
-			curr_distance = 0 
+			curr_distance = 0
+			write_to_file(curr_data, False, curr_time) 
 
 
 		# Ensure that we are only writing to file once # Reset value once we hit an hour mark that is not 12am
